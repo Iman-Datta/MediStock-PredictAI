@@ -162,7 +162,8 @@ PLOTLY_LAYOUT = dict(
 
 
 def apply_theme(fig, **extra):
-    fig.update_layout(**PLOTLY_LAYOUT, **extra)
+    layout = {**PLOTLY_LAYOUT, **extra}   # extra keys win over defaults
+    fig.update_layout(**layout)
     return fig
 
 
@@ -259,9 +260,9 @@ with tab_predict:
         category   = med_row["category"]
         med_imp    = med_row["medicine_importance"]
         st.markdown(
-            f"<span class='muted'>ID: <b>{med_id}</b> &nbsp;·&nbsp; "
-            f"Category: <b>{category}</b> &nbsp;·&nbsp; "
-            f"Importance: <b style='color:{IMPORTANCE_COLORS.get(med_imp, '#E6EDF3')}'>{med_imp}</b></span>",
+            f'<span class="muted">ID: <b>{med_id}</b> &nbsp;·&nbsp; '
+            f'Category: <b>{category}</b> &nbsp;·&nbsp; '
+            f'Importance: <b style="color:{IMPORTANCE_COLORS.get(med_imp, "#E6EDF3")}">{med_imp}</b></span>',
             unsafe_allow_html=True,
         )
         st.markdown("</div>", unsafe_allow_html=True)
@@ -387,8 +388,6 @@ with tab_predict:
             with r3:
                 # Importance badge + context
                 imp_col = IMPORTANCE_COLORS.get(med_imp, "#8B949E")
-                avg_color = "#F44336" if pred > sales_4avg * 1.15 else "#4CAF50"
-                avg_trend = "▲" if pred >= sales_4avg else "▼"
                 st.markdown(
                     f"<div class='card'>"
                     f"<div class='muted'>Medicine</div>"
@@ -402,8 +401,8 @@ with tab_predict:
                     f"<span>4-wk avg</span><span>{sales_4avg:.0f}</span></div>"
                     f"<div style='display:flex;justify-content:space-between;font-size:.85rem'>"
                     f"<span>vs avg</span>"
-                    f"<span style='color:{avg_color}'>"
-                    f"{avg_trend} {abs(pred - sales_4avg):.0f}</span></div>"
+                    f'<span style="color:{"#F44336" if pred > sales_4avg * 1.15 else "#4CAF50"}">'
+                    f"{'▲' if pred >= sales_4avg else '▼'} {abs(pred - sales_4avg):.0f}</span></div>"
                     f"</div>",
                     unsafe_allow_html=True,
                 )
